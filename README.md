@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Sites - Sucesso</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; display: flex; height: 100vh; margin: 0; background-color: #f0f2f5; overflow: hidden; }
+        
+        #painel-controle {
+            width: 380px; background: #1a252f; color: white; padding: 20px;
+            display: flex; flex-direction: column; gap: 10px; overflow-y: auto; z-index: 10;
+        }
+
+        #pre-visualizacao { flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: 20px; background: #dfe6e9; }
+
+        #site-cliente {
+            width: 100%; max-width: 450px; background: white; padding: 30px;
+            border-radius: 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-top: 10px solid #e67e22; position: relative;
+        }
+
+        /* Ecrã de Sucesso */
+        #tela-sucesso {
+            display: none; /* Escondido por padrão */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(26, 37, 47, 0.95); color: white;
+            flex-direction: column; align-items: center; justify-content: center;
+            z-index: 100; text-align: center;
+        }
+
+        .check-icon { font-size: 80px; color: #25d366; margin-bottom: 20px; }
+
+        .lista-produtos { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; }
+        .item-produto { display: flex; justify-content: space-between; padding: 8px; background: #f9f9f9; border-radius: 5px; border-left: 4px solid #e67e22; font-size: 0.9em; }
+
+        input, select, textarea { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        .btn-whatsapp { background-color: #25d366; color: white; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        .btn-reiniciar { background: none; border: 1px solid white; color: white; padding: 10px 20px; cursor: pointer; border-radius: 5px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <div id="tela-sucesso">
+        <div class="check-icon">✓</div>
+        <h1>Pedido Enviado com Sucesso!</h1>
+        <p>Já abrimos o seu WhatsApp. Estaremos à sua espera para finalizar o projeto.</p>
+        <button class="btn-reiniciar" onclick="location.reload()">Criar Novo Site</button>
+    </div>
+
+    <div id="painel-controle">
+        <h2>🛠️ Meu Construtor</h2>
+        <label>Nicho de Negócio:</label>
+        <select id="select-modelo" onchange="mudarModelo()">
+            <option value="geral">Escolha...</option>
+            <option value="adega">🍷 Adega</option>
+            <option value="petshop">🐾 Pet Shop</option>
+            <option value="racao">🌾 Casa de Rações</option>
+        </select>
+        
+        <label>Nome do Estabelecimento:</label>
+        <input type="text" id="input-nome" placeholder="Ex: Pet Feliz" oninput="atualizarSite()">
+
+        <label>Produtos (Nome e Preço):</label>
+        <div style="display: flex; gap: 5px;"><input type="text" id="p1-nome" placeholder="Produto 1" oninput="atualizarSite()"><input type="text" id="p1-preco" placeholder="€0.00" oninput="atualizarSite()"></div>
+        <div style="display: flex; gap: 5px;"><input type="text" id="p2-nome" placeholder="Produto 2" oninput="atualizarSite()"><input type="text" id="p2-preco" placeholder="€0.00" oninput="atualizarSite()"></div>
+
+        <label>Cor da Marca:</label>
+        <input type="color" id="input-cor" value="#e67e22" oninput="atualizarSite()">
+        
+        <button class="btn-whatsapp" onclick="enviarWhatsApp()">✅ Enviar e Finalizar</button>
+    </div>
+
+    <div id="pre-visualizacao">
+        <div id="site-cliente">
+            <div id="view-icon" style="font-size: 50px;">🏢</div>
+            <h1 id="view-nome">Nome da Loja</h1>
+            <div class="lista-produtos" id="view-lista"></div>
+            <button id="view-btn" style="margin-top:20px; padding: 12px 30px; border: none; color: white; border-radius: 5px; width: 100%;">Fazer Pedido</button>
+        </div>
+    </div>
+
+    <script>
+        function atualizarSite() {
+            const nome = document.getElementById('input-nome').value;
+            const cor = document.getElementById('input-cor').value;
+            document.getElementById('view-nome').innerText = nome || "Nome da Loja";
+            document.getElementById('view-nome').style.color = cor;
+            document.getElementById('view-btn').style.backgroundColor = cor;
+            document.getElementById('site-cliente').style.borderTopColor = cor;
+
+            let htmlProd = "";
+            for(let i=1; i<=2; i++) {
+                let n = document.getElementById(`p${i}-nome`).value;
+                let p = document.getElementById(`p${i}-preco`).value;
+                if(n) htmlProd += `<div class="item-produto" style="border-left-color:${cor}"><span>${n}</span><strong>${p}</strong></div>`;
+            }
+            document.getElementById('view-lista').innerHTML = htmlProd;
+        }
+
+        function mudarModelo() {
+            const m = { adega: {i:"🍷", c:"#720e0e"}, petshop: {i:"🐾", c:"#2980b9"}, racao: {i:"🌾", c:"#27ae60"} };
+            const s = document.getElementById('select-modelo').value;
+            if(m[s]) {
+                document.getElementById('view-icon').innerText = m[s].i;
+                document.getElementById('input-cor').value = m[s].c;
+                atualizarSite();
+            }
+        }
+
+        function enviarWhatsApp() {
+            const meuNum = "351912345678"; // <--- COLOQUE SEU NÚMERO AQUI
+            const nome = document.getElementById('input-nome').value;
+            
+            // Mostrar Página de Sucesso
+            document.getElementById('tela-sucesso').style.display = 'flex';
+
+            // Abrir WhatsApp
+            const msg = `Olá! Acabei de criar o meu site na sua plataforma!%0A*Loja:* ${nome}`;
+            window.open(`https://wa.me/${meuNum}?text=${msg}`, '_blank');
+        }
+    </script>
+</body>
+</html>
